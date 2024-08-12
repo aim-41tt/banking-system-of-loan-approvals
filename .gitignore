@@ -1,3 +1,29 @@
+# Eclipse
+# Ignore Eclipse project files
+.classpath
+.project
+.settings/
+bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~
+
+# Ignore the IntelliJ IDEA project files
+*.iml
+*.iws
+*.ipr
+.idea/
+
+# Spring Boot
+bin/
+build/
+!target/
+!src/main/
+!src/test/
+/target/
+
 # Compiled class file
 *.class
 
