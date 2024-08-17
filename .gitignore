@@ -22,7 +22,7 @@ build/
 !target/
 !src/main/
 !src/test/
-/target/
+*/target/
 
 # Compiled class file
 *.class
