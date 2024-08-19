@@ -2,14 +2,14 @@ package ru.example.bankingSystem.LoanAssessmentSystem.model;
 
 import java.time.LocalDate;
 
-public class ClientRequest {
+public class Client {
 
 	private String fullName; // ФИО
 	private LocalDate dateOfBirth; // Дата рождения
 	private int numberOfCredits; // Количество кредитов
 	private int numberOfDelays; // Количество просрочек
 	private Long monthlyIncome; // Ежемесячный доход
-	private Long requestedLoanAmount; // Запрашиваемая 
+	private Long requestedLoanAmount; // Запрашиваемая сумма кредита
 
 	/*
 	  { 
@@ -22,10 +22,10 @@ public class ClientRequest {
 	  }
 	 */
 		
-	public ClientRequest() {
+	public Client() {
 	}
 
-	public ClientRequest(String fullName, LocalDate dateOfBirth, int numberOfCredits, int numberOfDelays,
+	public Client(String fullName, LocalDate dateOfBirth, int numberOfCredits, int numberOfDelays,
 			Long monthlyIncome, Long requestedLoanAmount) {
 		this.fullName = fullName;
 		this.dateOfBirth = dateOfBirth;
@@ -85,7 +85,7 @@ public class ClientRequest {
 
 	@Override
 	public String toString() {
-		return "ClientRequest [fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", numberOfCredits="
+		return "Client [fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", numberOfCredits="
 				+ numberOfCredits + ", numberOfDelays=" + numberOfDelays + ", monthlyIncome=" + monthlyIncome
 				+ ", requestedLoanAmount=" + requestedLoanAmount + "]";
 	}
