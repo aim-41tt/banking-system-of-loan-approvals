@@ -8,7 +8,7 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
-	// Создание топика
+	// Создание топиков
 	@Bean
 	NewTopic clientRequestTopic() {
 		return TopicBuilder.name("client_requests") // Название топика
@@ -19,9 +19,9 @@ public class KafkaTopicConfig {
 
 	@Bean
 	NewTopic resultsLoanApprovalToTopic() {
-		return TopicBuilder.name("results_loan_approval_to_client") // Название топика
-				.partitions(10) // Количество партиций
-				.replicas(1) // Количество реплик (зависит от доступности и отказоустойчивости)
+		return TopicBuilder.name("results_loan_approval_to_client")
+				.partitions(10) 
+				.replicas(1)
 				.build();
 	}
 

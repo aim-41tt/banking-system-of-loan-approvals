@@ -10,23 +10,22 @@ public class Client {
 	private int numberOfDelays; // Количество просрочек
 	private Long monthlyIncome; // Ежемесячный доход
 	private Long requestedLoanAmount; // Запрашиваемая сумма кредита
+	private String reasonRefusal; // Причин(а \ ы) отказа
 
-	/*
-	  { 
-	  "fullName": "Иванов Иван Иванович",
-	  "dateOfBirth": "1985-03-12",
-	  "numberOfCredits": 3, 
-	  "numberOfDelays": 1,
-	  "monthlyIncome": 80000,
-	  "requestedLoanAmount": 500000 
-	  }
-	 */
-		
+//	{
+//	    "fullName": "Иванов Иван Иванович",
+//	    "dateOfBirth": "1985-03-12",
+//	    "numberOfCredits": 3,
+//	    "numberOfDelays": 1,
+//	    "monthlyIncome": 80000,
+//	    "requestedLoanAmount": 5000
+//	}
+
 	public Client() {
 	}
 
-	public Client(String fullName, LocalDate dateOfBirth, int numberOfCredits, int numberOfDelays,
-			Long monthlyIncome, Long requestedLoanAmount) {
+	public Client(String fullName, LocalDate dateOfBirth, int numberOfCredits, int numberOfDelays, Long monthlyIncome,
+			Long requestedLoanAmount) {
 		this.fullName = fullName;
 		this.dateOfBirth = dateOfBirth;
 		this.numberOfCredits = numberOfCredits;
@@ -83,12 +82,31 @@ public class Client {
 		this.requestedLoanAmount = requestedLoanAmount;
 	}
 
+	public String getReasonRefusal() {
+		return reasonRefusal;
+	}
+
+	public void setReasonRefusal(String reasonRefusal) {
+		this.reasonRefusal = reasonRefusal;
+	}
+
+	public void addReasonRefusal(String reasonRefusal) {
+		if (reasonRefusal == null || reasonRefusal.isBlank()) {
+			return;
+		}
+
+		if (this.reasonRefusal == null || this.reasonRefusal.isBlank()) {
+			setReasonRefusal(reasonRefusal);
+		} else {
+			this.reasonRefusal += (", " + reasonRefusal);
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "Client [fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", numberOfCredits="
-				+ numberOfCredits + ", numberOfDelays=" + numberOfDelays + ", monthlyIncome=" + monthlyIncome
-				+ ", requestedLoanAmount=" + requestedLoanAmount + "]";
+		return "Client [fullName=" + fullName + ", dateOfBirth=" + dateOfBirth + ", numberOfCredits=" + numberOfCredits
+				+ ", numberOfDelays=" + numberOfDelays + ", monthlyIncome=" + monthlyIncome + ", requestedLoanAmount="
+				+ requestedLoanAmount + ", reasonRefusal=" + reasonRefusal + "]";
 	}
-	
-	
+
 }

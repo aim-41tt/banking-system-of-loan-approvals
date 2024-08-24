@@ -9,10 +9,10 @@ public class KafkaProducer {
 
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
-	
+
 	public void sendMessage(String value, String key) {
 		String topic = "results_loan_approval_to_client";
-		
+
 		kafkaTemplate.send(topic, key, value);
 	}
 }

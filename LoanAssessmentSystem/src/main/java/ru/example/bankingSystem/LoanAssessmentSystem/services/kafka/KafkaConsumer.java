@@ -18,34 +18,30 @@ public class KafkaConsumer {
 
 	@Autowired
 	private LoanApprovalService loanApprovalService;
-	@Autowired
-	private KafkaProducer kafkaProducer;
 
 	@KafkaListener(topics = "client_requests", groupId = "client_requests_group", containerFactory = "kafkaListenerContainerFactory")
-	public void listen(ConsumerRecord<String, String> clientRequestMessages, Acknowledgment ack) {
+	public void listenerClientRequests(ConsumerRecord<String, String> clientRequestMessages, Acknowledgment ack) {
 		try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.findAndRegisterModules();
+			ObjectMapper mapper = new ObjectMapper();
+			mapper.findAndRegisterModules();
 
-            try {
-                // Пытаемся десериализовать как список клиентов
-                ClientList clientList = mapper.readValue(clientRequestMessages.value(), ClientList.class);
-                for (Client client : clientList.getClients()) {
-                    loanApprovalService.processClient(client);
-                }
-            } catch (UnrecognizedPropertyException e) {
-                // Если десериализация как списка не удалась, пробуем десериализовать как одного клиента
-                Client client = mapper.readValue(clientRequestMessages.value(), Client.class);
-                loanApprovalService.processClient(client);
-            }
+			try {
+				// Пытаемся десериализовать как список клиентов
+				ClientList clientList = mapper.readValue(clientRequestMessages.value(), ClientList.class);
+				for (Client client : clientList.getClients()) {
+					loanApprovalService.processClient(client, clientRequestMessages.key());
+				}
+			} catch (UnrecognizedPropertyException e) {
+				// Если десериализация как списка не удалась, пробуем десериализовать как одного
+				// клиента
+				Client client = mapper.readValue(clientRequestMessages.value(), Client.class);
+				loanApprovalService.processClient(client, clientRequestMessages.key());
+			}
+			
+			ack.acknowledge();
 
-            System.out.println("Processing client request: " + clientRequestMessages.value() + "\n"+clientRequestMessages.key());
-
-            ack.acknowledge();
-            
-            kafkaProducer.sendMessage(clientRequestMessages.value(), clientRequestMessages.key());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
