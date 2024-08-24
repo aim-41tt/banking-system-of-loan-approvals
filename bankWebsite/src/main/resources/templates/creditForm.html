@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Application</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+    <h1>Credit Application Form</h1>
+    <form id="creditForm" th:action="@{/api/credit/apply}" method="post">
+        <label for="fullName">Full Name:</label><br>
+        <input type="text" id="fullName" name="fullName"><br><br>
+
+        <label for="dateOfBirth">Date of Birth:</label><br>
+        <input type="date" id="dateOfBirth" name="dateOfBirth"><br><br>
+
+        <label for="numberOfCredits">Number of Credits:</label><br>
+        <input type="number" id="numberOfCredits" name="numberOfCredits"><br><br>
+
+        <label for="numberOfDelays">Number of Delays:</label><br>
+        <input type="number" id="numberOfDelays" name="numberOfDelays"><br><br>
+
+        <label for="monthlyIncome">Monthly Income:</label><br>
+        <input type="number" id="monthlyIncome" name="monthlyIncome"><br><br>
+
+        <label for="requestedLoanAmount">Requested Loan Amount:</label><br>
+        <input type="number" id="requestedLoanAmount" name="requestedLoanAmount"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+
+    <p id="responseMessage"></p>
+
+    <script>
+        var stompClient = null;
+
+        function connect() {
+            var socket = new SockJS('/ws');
+            stompClient = Stomp.over(socket);
+
+            stompClient.connect({}, function(frame) {
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/loanApproval', function(response) {
+                    document.getElementById("responseMessage").textContent = 'Ответ на кредитную заявку: ' + response.body;
+                });
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect(function() {
+                    console.log("Disconnected");
+                });
+            }
+        }
+
+        document.getElementById("creditForm").addEventListener("submit", function(event){
+            event.preventDefault();
+
+            let formData = {
+                fullName: document.getElementById("fullName").value,
+                dateOfBirth: document.getElementById("dateOfBirth").value,
+                numberOfCredits: document.getElementById("numberOfCredits").value,
+                numberOfDelays: document.getElementById("numberOfDelays").value,
+                monthlyIncome: document.getElementById("monthlyIncome").value,
+                requestedLoanAmount: document.getElementById("requestedLoanAmount").value
+            };
+
+            fetch("/api/credit/apply", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("responseMessage").textContent = data;
+            });
+        });
+
+        window.onload = function() {
+            connect();
+        };
+
+        window.onbeforeunload = function() {
+            disconnect();
+        };
+    </script>
+</body>
+</html>
