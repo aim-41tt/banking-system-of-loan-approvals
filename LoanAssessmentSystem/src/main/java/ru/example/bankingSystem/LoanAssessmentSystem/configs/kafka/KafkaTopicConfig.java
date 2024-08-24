@@ -8,14 +8,21 @@ import org.springframework.kafka.config.TopicBuilder;
 @Configuration
 public class KafkaTopicConfig {
 
+	// Создание топика
+	@Bean
+	NewTopic clientRequestTopic() {
+		return TopicBuilder.name("client_requests") // Название топика
+				.partitions(10) // Количество партиций
+				.replicas(1) // Количество реплик (зависит от доступности и отказоустойчивости)
+				.build();
+	}
 
-    // Создание топика
-    @Bean
-    public NewTopic clientRequestTopic() {
-        return TopicBuilder.name("client_requests") // Название топика
-                .partitions(10) // Количество партиций
-                .replicas(1) // Количество реплик (зависит от доступности и отказоустойчивости)
-                .build();
-    }
+	@Bean
+	NewTopic resultsLoanApprovalToTopic() {
+		return TopicBuilder.name("results_loan_approval_to_client") // Название топика
+				.partitions(10) // Количество партиций
+				.replicas(1) // Количество реплик (зависит от доступности и отказоустойчивости)
+				.build();
+	}
 
 }

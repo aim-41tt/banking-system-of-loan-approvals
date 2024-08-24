@@ -1,5 +1,6 @@
 package ru.example.bankingSystem.LoanAssessmentSystem.services.kafka;
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.Acknowledgment;
@@ -17,28 +18,32 @@ public class KafkaConsumer {
 
 	@Autowired
 	private LoanApprovalService loanApprovalService;
+	@Autowired
+	private KafkaProducer kafkaProducer;
 
 	@KafkaListener(topics = "client_requests", groupId = "client_requests_group", containerFactory = "kafkaListenerContainerFactory")
-	public void listen(String clientRequestMessages, Acknowledgment ack) {
+	public void listen(ConsumerRecord<String, String> clientRequestMessages, Acknowledgment ack) {
 		try {
             ObjectMapper mapper = new ObjectMapper();
             mapper.findAndRegisterModules();
 
             try {
                 // Пытаемся десериализовать как список клиентов
-                ClientList clientList = mapper.readValue(clientRequestMessages, ClientList.class);
+                ClientList clientList = mapper.readValue(clientRequestMessages.value(), ClientList.class);
                 for (Client client : clientList.getClients()) {
                     loanApprovalService.processClient(client);
                 }
             } catch (UnrecognizedPropertyException e) {
                 // Если десериализация как списка не удалась, пробуем десериализовать как одного клиента
-                Client client = mapper.readValue(clientRequestMessages, Client.class);
+                Client client = mapper.readValue(clientRequestMessages.value(), Client.class);
                 loanApprovalService.processClient(client);
             }
 
-            System.out.println("Processing client request: " + clientRequestMessages);
+            System.out.println("Processing client request: " + clientRequestMessages.value() + "\n"+clientRequestMessages.key());
 
             ack.acknowledge();
+            
+            kafkaProducer.sendMessage(clientRequestMessages.value(), clientRequestMessages.key());
         } catch (Exception e) {
             e.printStackTrace();
         }
